@@ -1,6 +1,6 @@
 # Classical Piano Composer
 
-This project allows you to train a neural network to generate midi music files that make use of a single instrument
+This project leverages a Long Short-Term Memory (LSTM) neural network to generate music. It begins with parsing MIDI files to extract notes and chords, which are then converted into sequences of integers. These sequences are used to train an LSTM-based neural network designed to predict the next note in a sequence, effectively learning the musical patterns and structures from the training data. Once the model is trained, it generates new music by predicting a sequence of notes based on a random starting sequence. These generated notes are then converted back into a MIDI file format, resulting in a playable piece of music. By utilizing deep learning techniques, this project explores the creative domain of music composition, showcasing the potential for AI-driven music generation
 
 ## Requirements
 
@@ -15,8 +15,6 @@ This project allows you to train a neural network to generate midi music files t
 
 To train the network you run **lstm.py**.
 
-E.g.
-
 ```
 python lstm.py
 ```
@@ -27,12 +25,11 @@ The network will use every midi file in ./midi_songs to train the network. The m
 
 ## Generating music
 
-Once you have trained the network you can generate text using **predict.py**
-
-E.g.
+Once you have trained the network you can generate music using **predict.py**
 
 ```
 python predict.py
 ```
 
-You can run the prediction file right away using the **weights.hdf5** file
+
+
