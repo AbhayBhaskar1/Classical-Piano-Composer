@@ -15,8 +15,6 @@ This project allows you to train a neural network to generate midi music files t
 
 To train the network you run **lstm.py**.
 
-E.g.
-
 ```
 python lstm.py
 ```
