@@ -27,4 +27,9 @@ The network will use every midi file in ./midi_songs to train the network. The m
 
 Once you have trained the network you can generate music using **predict.py**
 
+```
+python predict.py
+```
+
+
 
