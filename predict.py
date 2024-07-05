@@ -1,7 +1,7 @@
 """ This module generates notes for a midi file using the
     trained neural network """
 import pickle
-import numpy
+import numpy as np
 from music21 import instrument, note, stream, chord
 from keras.models import Sequential
 from keras.layers import Dense
@@ -43,7 +43,7 @@ def prepare_sequences(notes, pitchnames, n_vocab):
     n_patterns = len(network_input)
 
     # reshape the input into a format compatible with LSTM layers
-    normalized_input = numpy.reshape(network_input, (n_patterns, sequence_length, 1))
+    normalized_input = np.reshape(network_input, (n_patterns, sequence_length, 1))
     # normalize input
     normalized_input = normalized_input / float(n_vocab)
 
@@ -71,33 +71,28 @@ def create_network(network_input, n_vocab):
     model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
 
     # Load the weights to each node
-    model.load_weights('weights-improvement-36-2.7654-bigger.weights.h5')
+    model.load_weights('weights-improvement-44-2.2896-bigger.weights.h5')
 
     return model
 
-def generate_notes(model, network_input, pitchnames, n_vocab):
+def generate_notes(model, network_input, pitchnames, n_vocab, temperature=1.0):
     """ Generate notes from the neural network based on a sequence of notes """
-    # pick a random sequence from the input as a starting point for the prediction
-    start = numpy.random.randint(0, len(network_input)-1)
-
-    int_to_note = dict((number, note) for number, note in enumerate(pitchnames))
-
+    start = np.random.randint(0, len(network_input) - 1)
+    int_to_note = {number: note for number, note in enumerate(pitchnames)}
     pattern = network_input[start]
     prediction_output = []
 
-    # generate 500 notes
     for note_index in range(500):
-        prediction_input = numpy.reshape(pattern, (1, len(pattern), 1))
-        prediction_input = prediction_input / float(n_vocab)
-
+        prediction_input = np.reshape(pattern, (1, len(pattern), 1)) / float(n_vocab)
         prediction = model.predict(prediction_input, verbose=0)
-
-        index = numpy.argmax(prediction)
+        prediction = np.log(prediction) / temperature
+        exp_preds = np.exp(prediction)
+        prediction = exp_preds / np.sum(exp_preds)
+        index = np.random.choice(range(len(prediction[0])), p=prediction[0])
         result = int_to_note[index]
         prediction_output.append(result)
-
         pattern.append(index)
-        pattern = pattern[1:len(pattern)]
+        pattern = pattern[1:]
 
     return prediction_output
 
